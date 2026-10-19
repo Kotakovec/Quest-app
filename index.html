@@ -31,28 +31,32 @@
       display: block;
     }
 
-    #fullscreen-container {
+    #controls-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 1rem;
     }
 
-    body.is-fullscreen #fullscreen-container {
+    body.is-fullscreen #controls-container {
       display: none;
     }
 
-    .btn-fullscreen {
+    .btn {
       padding: 1rem 2rem;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 600;
-      color: #0f172a;
-      background: #38bdf8;
       border: none;
       border-radius: 0.75rem;
       cursor: pointer;
+      transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+      min-width: 240px;
+    }
+
+    .btn-fullscreen {
+      color: #0f172a;
+      background: #38bdf8;
       box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.4);
-      transition: transform 0.15s ease, background-color 0.15s ease;
     }
 
     .btn-fullscreen:hover {
@@ -60,16 +64,29 @@
       transform: translateY(-2px);
     }
 
-    .btn-fullscreen:active {
+    .btn-mobile {
+      color: #f8fafc;
+      background: #334155;
+      border: 1px solid #475569;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-mobile:hover {
+      background: #475569;
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
       transform: translateY(0);
     }
   </style>
 </head>
 <body>
 
-  <!-- Tlačítko zobrazené, když aplikace NENÍ ve fullscreenu -->
-  <div id="fullscreen-container">
-    <button id="fullscreen-btn" class="btn-fullscreen">Fullscreen</button>
+  <!-- Tlačítka zobrazená mimo fullscreen -->
+  <div id="controls-container">
+    <button id="fullscreen-btn" class="btn btn-fullscreen">Fullscreen</button>
+    <button id="mobile-window-btn" class="btn btn-mobile">📱 Mobilní okno (390×844)</button>
   </div>
 
   <!-- Obsah aplikace zobrazený ve fullscreenu -->
@@ -79,7 +96,8 @@
   </main>
 
   <script>
-    const btn = document.getElementById('fullscreen-btn');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const mobileWindowBtn = document.getElementById('mobile-window-btn');
 
     function updateFullscreenState() {
       const isFs = Boolean(
@@ -106,7 +124,21 @@
       }
     }
 
-    btn.addEventListener('click', toggleFullscreen);
+    function openMobileWindow() {
+      const width = 390;
+      const height = 844;
+      const left = Math.max(0, Math.round((window.screen.width - width) / 2));
+      const top = Math.max(0, Math.round((window.screen.height - height) / 2));
+
+      window.open(
+        window.location.href,
+        'QuestAppMobile',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=no`
+      );
+    }
+
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    mobileWindowBtn.addEventListener('click', openMobileWindow);
 
     ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
       document.addEventListener(evt, updateFullscreenState);

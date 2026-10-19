@@ -1,1 +1,118 @@
-cgfbb
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quest App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #app {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    body.is-fullscreen #app {
+      display: block;
+    }
+
+    #fullscreen-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    body.is-fullscreen #fullscreen-container {
+      display: none;
+    }
+
+    .btn-fullscreen {
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #0f172a;
+      background: #38bdf8;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.4);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    .btn-fullscreen:hover {
+      background: #7dd3fc;
+      transform: translateY(-2px);
+    }
+
+    .btn-fullscreen:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tlačítko zobrazené, když aplikace NENÍ ve fullscreenu -->
+  <div id="fullscreen-container">
+    <button id="fullscreen-btn" class="btn-fullscreen">Fullscreen</button>
+  </div>
+
+  <!-- Obsah aplikace zobrazený ve fullscreenu -->
+  <main id="app">
+    <h1>Quest App</h1>
+    <p>Aplikace běží ve fullscreen režimu.</p>
+  </main>
+
+  <script>
+    const btn = document.getElementById('fullscreen-btn');
+
+    function updateFullscreenState() {
+      const isFs = Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+
+      if (isFs) {
+        document.body.classList.add('is-fullscreen');
+      } else {
+        document.body.classList.remove('is-fullscreen');
+      }
+    }
+
+    async function toggleFullscreen() {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (err) {
+        console.error('Fullscreen request failed:', err);
+      }
+    }
+
+    btn.addEventListener('click', toggleFullscreen);
+
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
+      document.addEventListener(evt, updateFullscreenState);
+    });
+
+    updateFullscreenState();
+  </script>
+</body>
+</html>
